@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define MAX_SIZE 100
+
+// Define a structure for the stack
+struct Stack {
+    int top;
+    char items[MAX_SIZE];
+};
+
+// Function to initialize the stack
+void initialize(struct Stack *s) {
+    s->top = -1;
+}
+
+// Function to check if the stack is empty
+int isEmpty(struct Stack *s) {
+    return (s->top == -1);
+}
+
+// Function to check if the stack is full
+int isFull(struct Stack *s) {
+    return (s->top == MAX_SIZE - 1);
+}
+
+// Function to push an element onto the stack
+void push(struct Stack *s, char value) {
+    if (isFull(s)) {
+        printf("Stack overflow\n");
+        exit(EXIT_FAILURE);
+    }
+    s->items[++(s->top)] = value;
+}
+
+// Function to pop an element from the stack
+char pop(struct Stack *s) {
+    if (isEmpty(s)) {
+        printf("Stack underflow\n");
+        exit(EXIT_FAILURE);
+    }
+    return s->items[(s->top)--];
+}
+
+// Function to get the precedence of an operator
+int getPrecedence(char operator) {
+    switch (operator) {
+        case '+':
+        case '-':
+            return 1;
+        case '*':
+        case '/':
+            return 2;
+        case '^':
+            return 3;
+        default:
+            return 0; // for operands
+    }
+}
+
+// Function to convert infix to postfix
+void infixToPostfix(char *infixExpression, char *postfixExpression) {
+    struct Stack stack;
+    initialize(&stack);
+
+    int i, j;
+    for (i = 0, j = 0; infixExpression[i] != '\0'; i++) {
+        if (isalnum(infixExpression[i])) {
+            postfixExpression[j++] = infixExpression[i];
+        } else if (infixExpression[i] == '(') {
+            push(&stack, '(');
+        } else if (infixExpression[i] == ')') {
+            while (!isEmpty(&stack) && stack.items[stack.top] != '(') {
+                postfixExpression[j++] = pop(&stack);
+            }
+            if (!isEmpty(&stack) && stack.items[stack.top] == '(') {
+                pop(&stack); // Pop the '(' from the stack
+            } else {
+                printf("Invalid expression: Unmatched parentheses\n");
+                exit(EXIT_FAILURE);
+            }
+        } else {
+            // Operator encountered
+            while (!isEmpty(&stack) && getPrecedence(infixExpression[i]) <= getPrecedence(stack.items[stack.top])) {
+                postfixExpression[j++] = pop(&stack);
+            }
+            push(&stack, infixExpression[i]);
+        }
+    }
+
+    // Pop any remaining operators from the stack
+    while (!isEmpty(&stack)) {
+        if (stack.items[stack.top] == '(') {
+            printf("Invalid expression: Unmatched parentheses\n");
+            exit(EXIT_FAILURE);
+        }
+        postfixExpression[j++] = pop(&stack);
+    }
+
+    // Null-terminate the postfix expression
+    postfixExpression[j] = '\0';
+}
+
+int main() {
+    char infixExpression[MAX_SIZE];
+    char postfixExpression[MAX_SIZE];
+
+    printf("Enter an infix expression: ");
+    scanf("%s", infixExpression);
+
+    infixToPostfix(infixExpression, postfixExpression);
+
+    printf("Postfix expression: %s\n", postfixExpression);
+
+    return 0;
+}
