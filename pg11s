@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 10
+
+// Define the structure for a hash table entry
+struct HashEntry {
+    int key;
+    int value;
+};
+
+// Define the structure for a hash table
+struct HashTable {
+    struct HashEntry table[SIZE];
+};
+
+// Function to initialize the hash table
+void initializeHashTable(struct HashTable* hashTable) {
+    for (int i = 0; i < SIZE; i++) {
+        hashTable->table[i].key = -1; // Initialize keys to -1 (indicating empty slot)
+        hashTable->table[i].value = -1;
+    }
+}
+
+// Function to perform linear probing and insert a key-value pair into the hash table
+void insert(struct HashTable* hashTable, int key, int value) {
+    int index = key % SIZE;
+
+    // Linear probing
+    while (hashTable->table[index].key != -1) {
+        index = (index + 1) % SIZE;
+    }
+
+    // Insert the key-value pair
+    hashTable->table[index].key = key;
+    hashTable->table[index].value = value;
+}
+
+// Function to perform linear probing and search for a key in the hash table
+int search(struct HashTable* hashTable, int key) {
+    int index = key % SIZE;
+
+    // Linear probing
+    while (hashTable->table[index].key != -1) {
+        if (hashTable->table[index].key == key) {
+            return hashTable->table[index].value; // Key found
+        }
+        index = (index + 1) % SIZE;
+    }
+
+    return -1; // Key not found
+}
+
+// Function to display the contents of the hash table
+void displayHashTable(struct HashTable* hashTable) {
+    printf("Hash Table:\n");
+    printf("Index\tKey\tValue\n");
+    for (int i = 0; i < SIZE; i++) {
+        printf("%d\t%d\t%d\n", i, hashTable->table[i].key, hashTable->table[i].value);
+    }
+}
+
+int main() {
+    struct HashTable hashTable;
+    initializeHashTable(&hashTable);
+
+    int n, key, value;
+
+    // Get the number of key-value pairs to insert
+    printf("Enter the number of key-value pairs: ");
+    scanf("%d", &n);
+
+    // Get input values from the user and insert them into the hash table
+    printf("Enter the key-value pairs:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d %d", &key, &value);
+        insert(&hashTable, key, value);
+    }
+
+    // Display the contents of the hash table
+    displayHashTable(&hashTable);
+
+    // Search for a key in the hash table
+    printf("Enter a key to search: ");
+    scanf("%d", &key);
+    int result = search(&hashTable, key);
+    if (result != -1) {
+        printf("Value found: %d\n", result);
+    } else {
+        printf("Key not found in the hash table.\n");
+    }
+
+    return 0;
+}
