@@ -1,0 +1,146 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a singly linked list node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to create a new node with the given data
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a node at the beginning of the linked list
+struct Node* insertAtBeginning(struct Node* head, int data) {
+    struct Node* newNode = createNode(data);
+    newNode->next = head;
+    return newNode;
+}
+
+// Function to delete a node with a specific data value
+struct Node* deleteNode(struct Node* head, int target) {
+    struct Node* current = head;
+    struct Node* prev = NULL;
+    struct Node* temp;
+
+    while (current != NULL) {
+        if (current->data == target) {
+            if (prev == NULL) {
+                // If the target is in the first node
+                temp = current;
+                current = current->next;
+                head = current;
+                free(temp);
+            } else {
+                // If the target is in a non-first node
+                temp = current;
+                prev->next = current->next;
+                current = current->next;
+                free(temp);
+            }
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+
+    return head;
+}
+
+// Function to merge two linked lists
+struct Node* mergeLists(struct Node* list1, struct Node* list2) {
+    if (list1 == NULL) {
+        return list2;
+    }
+
+    struct Node* current = list1;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+
+    current->next = list2;
+    return list1;
+}
+
+// Function to display the linked list
+void displayList(struct Node* head) {
+    printf("Linked List: ");
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+// Function to free the memory allocated for the linked list
+void freeList(struct Node* head) {
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    struct Node* list1 = NULL;
+    struct Node* list2 = NULL;
+    int n, data, target;
+
+    // Get the number of nodes in the first linked list
+    printf("Enter the number of nodes in the first linked list: ");
+    scanf("%d", &n);
+
+    // Get input values from the user and insert them into the first linked list
+    printf("Enter the values for the first linked list:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &data);
+        list1 = insertAtBeginning(list1, data);
+    }
+
+    // Get the number of nodes in the second linked list
+    printf("Enter the number of nodes in the second linked list: ");
+    scanf("%d", &n);
+
+    // Get input values from the user and insert them into the second linked list
+    printf("Enter the values for the second linked list:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &data);
+        list2 = insertAtBeginning(list2, data);
+    }
+
+    // Display the original linked lists
+    printf("Original ");
+    displayList(list1);
+    displayList(list2);
+
+    // Get the value to delete from the linked lists
+    printf("Enter the value to delete from the linked lists: ");
+    scanf("%d", &target);
+
+    // Delete occurrences of the target value from both linked lists
+    list1 = deleteNode(list1, target);
+    list2 = deleteNode(list2, target);
+
+    // Display the linked lists after deletion
+    printf("Linked lists after deletion: \n");
+    displayList(list1);
+    displayList(list2);
+
+    // Merge the two linked lists
+    struct Node* mergedList = mergeLists(list1, list2);
+
+    // Display the merged linked list
+    printf("Merged ");
+    displayList(mergedList);
+
+    // Free the memory allocated for the linked lists
+    freeList(mergedList);
+
+    return 0;
+}
