@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 5
+
+// Define a structure for the circular queue
+struct CircularQueue {
+    int front, rear;
+    int arr[MAX_SIZE];
+};
+
+// Function to initialize an empty circular queue
+void initializeCircularQueue(struct CircularQueue* cq) {
+    cq->front = -1;
+    cq->rear = -1;
+}
+
+// Function to check if the circular queue is empty
+int isEmpty(struct CircularQueue* cq) {
+    return (cq->front == -1 && cq->rear == -1);
+}
+
+// Function to check if the circular queue is full
+int isFull(struct CircularQueue* cq) {
+    return ((cq->rear + 1) % MAX_SIZE == cq->front);
+}
+
+// Function to enqueue a new element into the circular queue
+void enqueue(struct CircularQueue* cq, int data) {
+    if (isFull(cq)) {
+        printf("Circular queue is full. Cannot enqueue.\n");
+    } else {
+        if (isEmpty(cq)) {
+            cq->front = 0;
+            cq->rear = 0;
+        } else {
+            cq->rear = (cq->rear + 1) % MAX_SIZE;
+        }
+        cq->arr[cq->rear] = data;
+        printf("Enqueued %d\n", data);
+    }
+}
+
+// Function to dequeue an element from the circular queue
+void dequeue(struct CircularQueue* cq) {
+    if (isEmpty(cq)) {
+        printf("Circular queue is empty. Cannot dequeue.\n");
+    } else {
+        printf("Dequeued %d\n", cq->arr[cq->front]);
+        if (cq->front == cq->rear) {
+            // Last element is dequeued, reset front and rear
+            cq->front = -1;
+            cq->rear = -1;
+        } else {
+            cq->front = (cq->front + 1) % MAX_SIZE;
+        }
+    }
+}
+
+// Function to display the elements in the circular queue
+void displayCircularQueue(struct CircularQueue* cq) {
+    if (isEmpty(cq)) {
+        printf("Circular queue is empty.\n");
+    } else {
+        printf("Circular Queue: ");
+        int i = cq->front;
+        do {
+            printf("%d ", cq->arr[i]);
+            i = (i + 1) % MAX_SIZE;
+        } while (i != (cq->rear + 1) % MAX_SIZE);
+        printf("\n");
+    }
+}
+
+int main() {
+    struct CircularQueue cq;
+    initializeCircularQueue(&cq);
+
+    int choice, data;
+
+    do {
+        printf("\nCircular Queue Operations:\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data to enqueue: ");
+                scanf("%d", &data);
+                enqueue(&cq, data);
+                break;
+            case 2:
+                dequeue(&cq);
+                break;
+            case 3:
+                displayCircularQueue(&cq);
+                break;
+            case 4:
+                printf("Exiting the program.\n");
+                break;
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
