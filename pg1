@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define MAX_SIZE 100
+
+// Define a structure for the stack
+struct Stack {
+    int top;
+    int items[MAX_SIZE];
+};
+
+// Function to initialize the stack
+void initialize(struct Stack *s) {
+    s->top = -1;
+}
+
+// Function to check if the stack is empty
+int isEmpty(struct Stack *s) {
+    return (s->top == -1);
+}
+
+// Function to check if the stack is full
+int isFull(struct Stack *s) {
+    return (s->top == MAX_SIZE - 1);
+}
+
+// Function to push an element onto the stack
+void push(struct Stack *s, int value) {
+    if (isFull(s)) {
+        printf("Stack overflow\n");
+        exit(EXIT_FAILURE);
+    }
+    s->items[++(s->top)] = value;
+}
+
+// Function to pop an element from the stack
+int pop(struct Stack *s) {
+    if (isEmpty(s)) {
+        printf("Stack underflow\n");
+        exit(EXIT_FAILURE);
+    }
+    return s->items[(s->top)--];
+}
+
+// Function to evaluate a postfix expression
+int evaluatePostfix(char *expression) {
+    struct Stack stack;
+    initialize(&stack);
+
+    for (int i = 0; expression[i] != '\0'; i++) {
+        if (isdigit(expression[i])) {
+            push(&stack, expression[i] - '0');
+        } else {
+            int operand2 = pop(&stack);
+            int operand1 = pop(&stack);
+
+            switch (expression[i]) {
+                case '+':
+                    push(&stack, operand1 + operand2);
+                    break;
+                case '-':
+                    push(&stack, operand1 - operand2);
+                    break;
+                case '*':
+                    push(&stack, operand1 * operand2);
+                    break;
+                case '/':
+                    push(&stack, operand1 / operand2);
+                    break;
+                default:
+                    printf("Invalid operator: %c\n", expression[i]);
+                    exit(EXIT_FAILURE);
+            }
+        }
+    }
+
+    return pop(&stack);
+}
+
+int main() {
+    char expression[MAX_SIZE];
+
+    printf("Enter a postfix expression: ");
+    scanf("%s", expression);
+
+    int result = evaluatePostfix(expression);
+
+    printf("Result: %d\n", result);
+
+    return 0;
+}
