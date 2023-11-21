@@ -57,8 +57,16 @@ int isBalanced(char expression[]) {
 
 int main() {
     char expression[100];
+    int i = 0;
+    char c;
+
     printf("Enter an expression: ");
-    fgets(expression, sizeof(expression), stdin);
+
+    while ((c = getchar()) != '\n' && i < sizeof(expression) - 1) {
+        expression[i++] = c;
+    }
+
+    expression[i] = '\0'; // Null-terminate the string
 
     if (isBalanced(expression))
         printf("The expression is balanced.\n");
