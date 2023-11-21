@@ -1,0 +1,146 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+// Define the structure for a singly linked list node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to create a new node with the given data
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a node at the end of the linked list
+struct Node* insertAtEnd(struct Node* head, int data) {
+    struct Node* newNode = createNode(data);
+    if (head == NULL) {
+        return newNode;
+    }
+
+    struct Node* current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+
+    current->next = newNode;
+    return head;
+}
+
+// Function to delete a node with a specific data value
+struct Node* deleteNode(struct Node* head, int target) {
+    struct Node* current = head;
+    struct Node* prev = NULL;
+    struct Node* temp;
+
+    while (current != NULL) {
+        if (current->data == target) {
+            if (prev == NULL) {
+                // If the target is in the first node
+                temp = current;
+                current = current->next;
+                head = current;
+                free(temp);
+            } else {
+                // If the target is in a non-first node
+                temp = current;
+                prev->next = current->next;
+                current = current->next;
+                free(temp);
+            }
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+
+    return head;
+}
+
+// Function to find and print the minimum and maximum elements in the linked list
+void findMinMax(struct Node* head) {
+    if (head == NULL) {
+        printf("The linked list is empty.\n");
+        return;
+    }
+
+    int min = INT_MAX;
+    int max = INT_MIN;
+
+    struct Node* current = head;
+    while (current != NULL) {
+        if (current->data < min) {
+            min = current->data;
+        }
+        if (current->data > max) {
+            max = current->data;
+        }
+        current = current->next;
+    }
+
+    printf("Minimum element: %d\n", min);
+    printf("Maximum element: %d\n", max);
+}
+
+// Function to display the linked list
+void displayList(struct Node* head) {
+    printf("Linked List: ");
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+// Function to free the memory allocated for the linked list
+void freeList(struct Node* head) {
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    struct Node* head = NULL;
+    int n, data, target;
+
+    // Get the number of nodes in the linked list
+    printf("Enter the number of nodes in the linked list: ");
+    scanf("%d", &n);
+
+    // Get input values from the user and insert them into the linked list
+    printf("Enter the values for the nodes:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &data);
+        head = insertAtEnd(head, data);
+    }
+
+    // Display the original linked list
+    displayList(head);
+
+    // Get the value to delete from the linked list
+    printf("Enter the value to delete from the linked list: ");
+    scanf("%d", &target);
+
+    // Delete occurrences of the target value from the linked list
+    head = deleteNode(head, target);
+
+    // Display the linked list after deletion
+    printf("Linked list after deletion: ");
+    displayList(head);
+
+    // Find and print the minimum and maximum elements in the linked list
+    findMinMax(head);
+
+    // Free the memory allocated for the linked list
+    freeList(head);
+
+    return 0;
+}
