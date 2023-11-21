@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a singly linked list node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to create a new node with the given data
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a node at the beginning of the linked list
+struct Node* insertAtBeginning(struct Node* head, int data) {
+    struct Node* newNode = createNode(data);
+    newNode->next = head;
+    return newNode;
+}
+
+// Function to remove occurrences of a particular data in the linked list
+struct Node* removeOccurrences(struct Node* head, int target) {
+    struct Node* current = head;
+    struct Node* prev = NULL;
+    struct Node* temp;
+
+    while (current != NULL) {
+        if (current->data == target) {
+            if (prev == NULL) {
+                // If the target is in the first node
+                temp = current;
+                current = current->next;
+                head = current;
+                free(temp);
+            } else {
+                // If the target is in a non-first node
+                temp = current;
+                prev->next = current->next;
+                current = current->next;
+                free(temp);
+            }
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+
+    return head;
+}
+
+// Function to display the linked list
+void displayList(struct Node* head) {
+    printf("Linked List: ");
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+// Function to free the memory allocated for the linked list
+void freeList(struct Node* head) {
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    struct Node* head = NULL;
+    int n, data, target;
+
+    // Get the number of nodes in the linked list
+    printf("Enter the number of nodes in the linked list: ");
+    scanf("%d", &n);
+
+    // Get input values from the user and insert them into the linked list
+    printf("Enter the values for the nodes:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &data);
+        head = insertAtBeginning(head, data);
+    }
+
+    // Display the original linked list
+    displayList(head);
+
+    // Get the target value to remove from the linked list
+    printf("Enter the value to remove: ");
+    scanf("%d", &target);
+
+    // Remove occurrences of the target value
+    head = removeOccurrences(head, target);
+
+    // Display the updated linked list
+    printf("Updated ");
+    displayList(head);
+
+    // Free the memory allocated for the linked list
+    freeList(head);
+
+    return 0;
+}
