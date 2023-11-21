@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a singly linked list node
+struct Node {
+    int digit;
+    struct Node* next;
+};
+
+// Function to create a new node with the given digit
+struct Node* createNode(int digit) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->digit = digit;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a node at the end of the linked list
+struct Node* insertAtEnd(struct Node* head, int digit) {
+    struct Node* newNode = createNode(digit);
+    if (head == NULL) {
+        return newNode;
+    }
+
+    struct Node* current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+
+    current->next = newNode;
+    return head;
+}
+
+// Function to reverse the linked list
+struct Node* reverseList(struct Node* head) {
+    struct Node* prev = NULL;
+    struct Node* current = head;
+    struct Node* nextNode;
+
+    while (current != NULL) {
+        nextNode = current->next;
+        current->next = prev;
+        prev = current;
+        current = nextNode;
+    }
+
+    return prev; // 'prev' is the new head of the reversed list
+}
+// Function to break the number into individual digits and store them in a linked list
+struct Node* storeDigitsInList(int number) {
+    struct Node* head = NULL;
+
+    // Break the number into digits and insert them into the linked list
+    while (number > 0) {
+        int digit = number % 10;
+        head = insertAtEnd(head, digit);
+        number /= 10;
+    }
+
+    // Reverse the linked list to maintain the original order of digits
+    head =reverseList(head);
+
+    return head;
+}
+
+// Function to display the linked list
+void displayList(struct Node* head) {
+    printf("Linked List: ");
+    while (head != NULL) {
+        printf("%d ", head->digit);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+// Function to free the memory allocated for the linked list
+void freeList(struct Node* head) {
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    struct Node* head = NULL;
+    int number;
+
+    // Get the n-digit number from the user
+    printf("Enter an n-digit number: ");
+    scanf("%d", &number);
+
+    // Store the digits of the number in a linked list
+    head = storeDigitsInList(number);
+
+    // Display the linked list
+    displayList(head);
+
+    // Free the memory allocated for the linked list
+    freeList(head);
+
+    return 0;
+}
